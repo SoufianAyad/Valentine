@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For You ❤️</title>
+
+  <style>
+    :root{
+      --pink1:#ff758c;
+      --pink2:#ff7eb3;
+      --card: rgba(255,255,255,0.16);
+      --shadow: rgba(0,0,0,0.25);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--pink1), var(--pink2));
+      color:#fff;
+      height:100vh;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+
+    .card{
+      width:min(420px, 92vw);
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 26px 22px;
+      box-shadow: 0 18px 45px var(--shadow);
+      text-align:center;
+      position:relative;
+    }
+
+    h1{margin:0 0 8px; font-size: 1.9rem; letter-spacing: 0.3px;}
+    p{margin: 8px 0; opacity: 0.95; font-size: 1.02rem;}
+    .small{font-size:0.92rem; opacity:0.9}
+
+    .music{
+      margin: 14px auto 18px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      cursor:pointer;
+      transition: transform .08s ease, filter .15s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{transform: scale(0.98)}
+    .btn-primary{
+      background:#fff;
+      color:#ff3f6c;
+      font-weight:700;
+    }
+    .btn-ghost{
+      background: rgba(255,255,255,0.18);
+      color:#fff;
+      border: 1px solid rgba(255,255,255,0.22);
+      font-weight:600;
+    }
+    .btn-secondary{
+      background: rgba(0,0,0,0.18);
+      color:#fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      font-weight:600;
+    }
+
+    .arena{
+      position: relative;
+      height: 160px;
+      margin-top: 16px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.08);
+      overflow:hidden;
+    }
+
+    .arena .label{
+      position:absolute;
+      top:10px;
+      left:12px;
+      font-size:0.9rem;
+      opacity:0.9;
+    }
+
+    .yesWrap{
+      position:absolute;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-110%);
+    }
+
+    /* "No" is positioned absolutely so it can run around */
+    #noBtn{
+      position:absolute;
+      left: 58%;
+      bottom: 18px;
+      transform: translateX(0);
+      touch-action: manipulation;
+      white-space:nowrap;
+    }
+
+    .status{
+      margin-top: 12px;
+      font-size: 0.98rem;
+      min-height: 1.4em;
+      opacity:0.95;
+    }
+
+    /* Floating hearts */
+    .heart{
+      position: absolute;
+      bottom: -30px;
+      font-size: 18px;
+      opacity: 0.9;
+      animation: floatUp linear forwards;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+    }
+    @keyframes floatUp {
+      from { transform: translateY(0) translateX(0) scale(1); opacity:0.95; }
+      to   { transform: translateY(-120vh) translateX(var(--drift)) scale(1.5); opacity:0; }
+    }
+
+    /* Final popup */
+    .modal{
+      position: fixed;
+      inset: 0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+    }
+    .modal.open{display:flex}
+    .modalCard{
+      width: min(520px, 95vw);
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 22px;
+      padding: 22px;
+      text-align:center;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+    }
+    .modalCard h2{margin: 0 0 8px; font-size: 1.7rem;}
+    .modalCard p{margin: 6px 0 14px;}
+  </style>
+</head>
+
+<body>
+  <!-- You MUST replace "romantic.mp3" with your own file (see instructions below) -->
+  <audio id="bgMusic" preload="auto">
+    <source src="romantic.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="card">
+    <h1>Hey ❤️</h1>
+    <p>I made something small just for you.</p>
+    <p><b>Will you be my Valentine?</b></p>
+
+    <div class="music">
+      <button class="btn btn-ghost" id="playBtn">▶️ Play Music</button>
+      <button class="btn btn-secondary" id="pauseBtn" style="display:none;">⏸ Pause</button>
+    </div>
+
+    <div class="arena" id="arena">
+      <div class="label">Choose wisely 😄</div>
+
+      <div class="yesWrap">
+        <button class="btn btn-primary" id="yesBtn">Yes 💖</button>
+      </div>
+
+      <button class="btn btn-ghost" id="noBtn">No 🙃</button>
+    </div>
+
+    <div class="status" id="status"></div>
+    <div class="small">Tip: try tapping “No” 😌</div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modalCard">
+      <h2>Yeeeees! 💘</h2>
+      <p>You just made me the happiest person 🥹</p>
+      <p>Let’s plan something cute soon ✨</p>
+      <button class="btn btn-primary" id="closeModal">Close 💞</button>
+    </div>
+  </div>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const statusEl = document.getElementById("status");
+    const modal = document.getElementById("modal");
+    const closeModal = document.getElementById("closeModal");
+
+    const music = document.getElementById("bgMusic");
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+
+    let noCount = 0;
+
+    function arenaBounds(){
+      const a = arena.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+      return {
+        minX: 10,
+        minY: 40,
+        maxX: a.width - b.width - 10,
+        maxY: a.height - b.height - 10
+      };
+    }
+
+    function moveNoButton(){
+      const {minX, minY, maxX, maxY} = arenaBounds();
+
+      // pick a random spot inside arena
+      const x = Math.random() * (maxX - minX) + minX;
+      const y = Math.random() * (maxY - minY) + minY;
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top  = `${y}px`;
+      noBtn.style.bottom = "auto";
+      noBtn.style.transition = "left 120ms ease, top 120ms ease";
+    }
+
+    function setStatus(msg){
+      statusEl.textContent = msg;
+    }
+
+    function popHearts(amount = 18){
+      for(let i=0;i<amount;i++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = ["💖","💘","💗","❤️","💕"][Math.floor(Math.random()*5)];
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.animationDuration = (3 + Math.random()*2.5) + "s";
+        h.style.setProperty("--drift", (Math.random()*120 - 60) + "px");
+        h.style.fontSize = (16 + Math.random()*18) + "px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(), 6000);
+      }
+    }
+
+    // “No” dodges on hover (desktop) and on touch start (mobile)
+    noBtn.addEventListener("mouseenter", () => {
+      noCount++;
+      moveNoButton();
+      if(noCount === 1) setStatus("Hmm… are you sure? 😄");
+      else if(noCount === 2) setStatus("It’s getting harder to say no 😌");
+      else if(noCount === 3) setStatus("No button is shy 🙈");
+      else setStatus("Okay okay… just press YES 💖");
+    });
+
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault(); // prevents accidental click
+      noCount++;
+      moveNoButton();
+      if(noCount === 1) setStatus("Trying to say no? 😂");
+      else if(noCount === 2) setStatus("Nope, not happening 😌");
+      else if(noCount === 3) setStatus("Just say YES 💘");
+      else setStatus("I’ll keep running 😄");
+    }, {passive:false});
+
+    // If they somehow click "No"
+    noBtn.addEventListener("click", () => {
+      noCount++;
+      moveNoButton();
+      setStatus("Nice try 😄");
+    });
+
+    yesBtn.addEventListener("click", () => {
+      popHearts(32);
+      modal.classList.add("open");
+      setStatus("Correct answer 💖");
+    });
+
+    closeModal.addEventListener("click", () => {
+      modal.classList.remove("open");
+    });
+
+    // Music controls (must be user-initiated)
+    playBtn.addEventListener("click", async () => {
+      try{
+        await music.play();
+        playBtn.style.display = "none";
+        pauseBtn.style.display = "inline-block";
+        setStatus("Music on 🎶");
+      } catch(err){
+        setStatus("Couldn’t play the music. Add your mp3 and try again 💿");
+      }
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      music.pause();
+      pauseBtn.style.display = "none";
+      playBtn.style.display = "inline-block";
+      setStatus("Music paused ⏸");
+    });
+
+    // Start with a playful heart drift
+    setInterval(()=>popHearts(3), 900);
+
+    // Place the "No" button in a safe initial spot
+    // (so it doesn't overlap on small screens)
+    window.addEventListener("load", () => {
+      const {minX, minY} = arenaBounds();
+      noBtn.style.left = (minX + 180) + "px";
+      noBtn.style.top = (minY + 70) + "px";
+      noBtn.style.bottom = "auto";
+    });
+  </script>
+</body>
+</html>
